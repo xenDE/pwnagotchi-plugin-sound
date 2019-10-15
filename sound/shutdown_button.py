@@ -2,7 +2,7 @@
 
 # this script waits for pressed button at soundcard https://www.raspiaudio.com/promo and clean shutdown the raspberry pi
 #
-# edit "/etc/rc.local" and add the line "cd /usr/local/pwnagotchi/plugins/pwna-sound/ ; ./shutdown_button.py &" before the "exit 0" line
+# edit "/etc/rc.local" and add the line "cd /usr/local/pwnagotchi/plugins/sound/ ; ./shutdown_button.py &" before the "exit 0" line
 
 
 import logging
