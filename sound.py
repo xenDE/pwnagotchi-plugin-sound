@@ -1,5 +1,5 @@
 __author__ = 'https://github.com/xenDE/pwnagotchi-plugin-sound'
-__version__ = '1.0.0'
+__version__ = '1.0.0-alpha'
 __name__ = 'sound'
 __license__ = 'GPL3'
 __description__ = 'An plugin for pwnagotchi that plays an wav file with aplay on events and uses a text2speech engine. tested with 1.0.0-RC4'
@@ -25,6 +25,7 @@ __help__ = """
 import logging
 import os, sys
 from subprocess import call
+from shlex import quote
 
 OPTIONS = dict()
 
@@ -34,10 +35,10 @@ def play_my_sound(event, say=""):
     sounddir = os.path.dirname(os.path.realpath(__file__))+"/sound/"+OPTIONS['sound-dir']+"/"
     soundfile= sounddir+event+".wav"
     if os.path.isfile(soundfile):
-        t2s = '"'+OPTIONS['text2speech-lang']+'"'
+        t2s = quote(OPTIONS['text2speech-lang'])
         if OPTIONS['text2speech-use']:
-            t2s += ' "'+say+'"'
-        command = ["/bin/bash", "bash", "-c", sounddir+"do_play.sh "+soundfile+' '+t2s+" & disown"]
+            t2s += ' '+quote(say)
+        command = ["/bin/bash", "bash", "-c", sounddir+"do_play.sh "+quote(soundfile)+' '+t2s+" & disown"]
         logging.info("plugin.sound: event:"+event+" say:"+t2s)
         os.spawnlp(os.P_WAIT, *command)
     else:
