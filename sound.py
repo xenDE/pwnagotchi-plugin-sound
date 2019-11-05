@@ -27,6 +27,8 @@ import os, sys
 from subprocess import call
 from shlex import quote
 
+import json
+
 OPTIONS = dict()
 
 
@@ -38,7 +40,7 @@ def play_my_sound(event, say=""):
         t2s = quote(OPTIONS['text2speech-lang'])
         if OPTIONS['text2speech-use']:
             t2s += ' '+quote(say)
-        command = ["/bin/bash", "bash", "-c", sounddir+"do_play.sh "+quote(soundfile)+' '+t2s+" & disown"]
+        command = ["/bin/bash", "bash", "-c", sounddir+"../do_play.sh "+quote(soundfile)+' '+t2s+" & disown"]
         logging.info("plugin.sound: event:"+event+" say:"+t2s)
         os.spawnlp(os.P_WAIT, *command)
     else:
@@ -55,14 +57,24 @@ def on_loaded():
 
 # called when a new handshake is captured, access_point and client_station are json objects
 def on_handshake(agent, filename, access_point, client_station):
-    #    access_point: {'ipv4': '0.0.0.0', 'ipv6': '', 'mac': '44:4e:6d:aa:aa:aa', 'hostname': 'FRITZ!Box 6430 Cable BX', 'alias': '', 'vendor': 'AVM Audiovisuelles Marketing und Computersysteme GmbH', 'first_seen': '2019-10-08T01:24:08.535091885+01:00', 'last_seen': '2019-10-08T01:24:32.879958989+01:00', 'meta': {'values': {}}, 'frequency': 2437, 'channel': 6, 'rssi': -85, 'sent': 161, 'received': 0, 'encryption': 'WPA2', 'cipher': 'CCMP', 'authentication': 'PSK', 'wps': {'Config Methods': 'Push Button, Keypad, Display', 'Device Name': 'FBox', 'Manufacturer': 'AVM', 'Model Name': 'FBox', 'Model Number': '0000', 'Primary Device Type': 'AP (oui:0050f204)', 'RF Bands': '2.4Ghz', 'Response Type': 'AP', 'Serial Number': '0000', 'State': 'Configured', 'UUID-E': '133567cc5f3d5060000000000000000', 'Version': '2.0'}, 'clients': [], 'handshake': True}
+    #   access_point: {'ipv4': '0.0.0.0', 'ipv6': '', 'mac': '44:4e:6d:aa:aa:aa', 'hostname': 'FRITZ!Box 6430 Cable BX', 'alias': '', 'vendor': 'AVM Audiovisuelles Marketing und Computersysteme GmbH', 'first_seen': '2019-10-08T01:24:08.535091885+01:00', 'last_seen': '2019-10-08T01:24:32.879958989+01:00', 'meta': {'values': {}}, 'frequency': 2437, 'channel': 6, 'rssi': -85, 'sent': 161, 'received': 0, 'encryption': 'WPA2', 'cipher': 'CCMP', 'authentication': 'PSK', 'wps': {'Config Methods': 'Push Button, Keypad, Display', 'Device Name': 'FBox', 'Manufacturer': 'AVM', 'Model Name': 'FBox', 'Model Number': '0000', 'Primary Device Type': 'AP (oui:0050f204)', 'RF Bands': '2.4Ghz', 'Response Type': 'AP', 'Serial Number': '0000', 'State': 'Configured', 'UUID-E': '133567cc5f3d5060000000000000000', 'Version': '2.0'}, 'clients': [], 'handshake': True}
+    #   client_station: {"mac": "b8:27:eb:07:ee:16", "vendor": ""}
     # talk the hostname after event.wav is played
     play_my_sound(sys._getframe().f_code.co_name, str(access_point["hostname"]))
 
 
 # callend when the agent is deauthenticating a client station from an AP
 def on_deauthentication(agent, access_point, client_station):
+#    logging.info( "deauth ap: " + str(json.dumps(access_point)) )
+#    logging.info( "deauth client: " + str(json.dumps(client_station)) )
+# deauth ap: {"ipv4": "0.0.0.0", "ipv6": "", "mac": "bc:4d:fb:00:00:00", "hostname": "my private wifi", "alias": "", "vendor": "Hitron Technologies. Inc", "first_seen": "2019-10-24T15:12:56.318186677+01:00", "last_seen": "2019-10-24T15:17:11.87380339+01:00", "meta": {"values": {}}, "frequency": 2412, "channel": 1, "rssi": -84, "sent": 0, "received": 2812, "encryption": "WPA2", "cipher": "CCMP", "authentication": "PSK", "wps": {"Config Methods": "Keypad, Display, Label", "Device Name": "RalinkAPS", "Manufacturer": "Ralink Technology, Corp.", "Model Name": "Ralink Wireless Access Point", "Model Number": "RT2860", "Primary Device Type": "AP (oui:0050f204)", "RF Bands": "2.4Ghz", "Response Type": "AP", "Serial Number": "12345678", "State": "Configured", "UUID-E": "2880288028801880a880bc4dfb0bedc8", "Version": "1.0"}, "clients": [{"ipv4": "0.0.0.0", "ipv6": "", "mac": "08:c5:e1:fd:c4:c7", "hostname": "", "alias": "", "vendor": "Samsung Electro-Mechanics(Thailand)", "first_seen": "2019-10-24T15:13:22.325777687+01:00", "last_seen": "2019-10-24T15:13:22.325777687+01:00", "meta": {"values": {}}, "frequency": 2412, "channel": 1, "rssi": -83, "sent": 52, "received": 0, "encryption": "", "cipher": "", "authentication": "", "wps": {}}, {"ipv4": "0.0.0.0", "ipv6": "", "mac": "90:8d:78:77:fd:ca", "hostname": "", "alias": "", "vendor": "D-Link International", "first_seen": "2019-10-24T15:13:00.403321941+01:00", "last_seen": "2019-10-24T15:17:07.74394858+01:00", "meta": {"values": {}}, "frequency": 2412, "channel": 1, "rssi": -81, "sent": 848, "received": 0, "encryption": "", "cipher": "", "authentication": "", "wps": {}}, {"ipv4": "0.0.0.0", "ipv6": "", "mac": "c8:02:10:05:63:e3", "hostname": "", "alias": "", "vendor": "LG Innotek", "first_seen": "2019-10-24T15:13:03.051655414+01:00", "last_seen": "2019-10-24T15:14:46.499714689+01:00", "meta": {"values": {}}, "frequency": 2412, "channel": 1, "rssi": -77, "sent": 1588, "received": 0, "encryption": "", "cipher": "", "authentication": "", "wps": {}}, {"ipv4": "0.0.0.0", "ipv6": "", "mac": "c4:12:f5:49:44:76", "hostname": "", "alias": "", "vendor": "D-Link International", "first_seen": "2019-10-24T15:13:11.717423772+01:00", "last_seen": "2019-10-24T15:17:15.911791352+01:00", "meta": {"values": {}}, "frequency": 2412, "channel": 1, "rssi": -87, "sent": 324, "received": 0, "encryption": "", "cipher": "", "authentication": "", "wps": {}}], "handshake": false}
+# deauth client: {"ipv4": "0.0.0.0", "ipv6": "", "mac": "08:c5:e1:00:00:00", "hostname": "", "alias": "", "vendor": "Samsung Electro-Mechanics(Thailand)", "first_seen": "2019-10-24T15:13:22.325777687+01:00", "last_seen": "2019-10-24T15:13:22.325777687+01:00", "meta": {"values": {}}, "frequency": 2412, "channel": 1, "rssi": -83, "sent": 52, "received": 0, "encryption": "", "cipher": "", "authentication": "", "wps": {}}
     play_my_sound(sys._getframe().f_code.co_name)
+
+
+
+def on_cracked(agent, access_point_hostname):
+    play_my_sound(sys._getframe().f_code.co_name, str(access_point["hostname"]))
 
 
 # called to setup the ui elements
